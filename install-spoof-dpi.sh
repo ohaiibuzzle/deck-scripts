@@ -50,4 +50,4 @@ cat > /home/$USER/.steam/steam/config/proxyconfig.vdf <<EOF
 }
 EOF
 
-echo 'Done.'
+echo 'Done. Please restart your Steam Deck'
