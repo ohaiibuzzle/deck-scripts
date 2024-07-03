@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 
-SECURE_DNS_SERVICE='mozilla.cloudflare-dns.com/dns-query'
+SECURE_DNS_SERVICE='mozilla.cloudflare-dns.com'
 read -p "Enter a secure DoH DNS server name (default: $SECURE_DNS_SERVICE): " user_dns
 
 if [ -z "$user_dns" ]; then
-    # strip https:// if the user entered it
+    # strip https:// from the beginning and /dns-query from the end if the user entered it
     SECURE_DNS_SERVICE=${SECURE_DNS_SERVICE#https://}
     SECURE_DNS_SERVICE=${SECURE_DNS_SERVICE#http://}
+    SECURE_DNS_SERVICE=${SECURE_DNS_SERVICE%/dns-query}
 fi
 
 echo 'Testing secure DoH DNS server...'
-curl -s -H "accept: application/dns-json" "https://$SECURE_DNS_SERVICE"?name=apple.com > /dev/null
+curl -s -H "accept: application/dns-json" "https://$SECURE_DNS_SERVICE"/dns-query?name=apple.com > /dev/null
 if [ $? -ne 0 ]; then
     echo "Failed to connect to $SECURE_DNS_SERVICE"
     exit 1
@@ -47,6 +48,6 @@ cat > /home/$USER/.steam/steam/config/proxyconfig.vdf <<EOF
 	"port"		"9696"
 	"exclude_local"		"1"
 }
-EOF 
+EOF
 
-echo 'Done.
+echo 'Done.'
