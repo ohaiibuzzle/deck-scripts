@@ -3,7 +3,8 @@
 SECURE_DNS_SERVICE='mozilla.cloudflare-dns.com'
 read -p "Enter a secure DoH DNS server name (default: $SECURE_DNS_SERVICE): " user_dns
 
-if [ -z "$user_dns" ]; then
+if [ -n "$user_dns" ]; then
+    SECURE_DNS_SERVICE=$user_dns
     # strip https:// from the beginning and /dns-query from the end if the user entered it
     SECURE_DNS_SERVICE=${SECURE_DNS_SERVICE#https://}
     SECURE_DNS_SERVICE=${SECURE_DNS_SERVICE#http://}
