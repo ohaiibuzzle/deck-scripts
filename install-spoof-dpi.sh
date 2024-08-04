@@ -12,7 +12,7 @@ if [ -n "$user_dns" ]; then
 fi
 
 echo 'Testing secure DoH DNS server...'
-curl -s -H "accept: application/dns-json" "https://$SECURE_DNS_SERVICE"/dns-query?name=apple.com > /dev/null
+curl -s -H "accept: application/dns-json" "https://$SECURE_DNS_SERVICE"/dns-query?name=apple.com >/dev/null
 if [ $? -ne 0 ]; then
     echo "Failed to connect to $SECURE_DNS_SERVICE"
     exit 1
@@ -21,10 +21,10 @@ fi
 echo "Using $SECURE_DNS_SERVICE as secure DoH DNS server"
 
 echo 'Running the official spoof-dpi install script, please wait...'
-curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh | bash -s linux
+curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh | bash -s linux-amd64
 
 echo 'Installing systemd service...'
-cat > /home/$USER/.config/systemd/user/spoofdpi.service <<EOF
+cat >/home/$USER/.config/systemd/user/spoofdpi.service <<EOF
 [Unit]
 Description=SpoofDPI
 
@@ -41,7 +41,7 @@ systemctl --user enable --now spoofdpi.service
 echo 'Configuring Gaming Mode to use SpoofDPI...'
 
 mkdir -p /home/$USER/.steam/steam/config
-cat > /home/$USER/.steam/steam/config/proxyconfig.vdf <<EOF
+cat >/home/$USER/.steam/steam/config/proxyconfig.vdf <<EOF
 "proxyconfig"
 {
 	"proxy_mode"		"2"
