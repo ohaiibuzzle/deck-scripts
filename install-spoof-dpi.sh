@@ -1,4 +1,24 @@
 #!/usr/bin/env bash
+SECURE_DNS_SERVICE='mozilla.cloudflare-dns.com'
+read -p "Enter a secure DoH DNS server name (default: $SECURE_DNS_SERVICE): " user_dns
+
+if [ -n "$user_dns" ]; then
+    SECURE_DNS_SERVICE=$user_dns
+    # strip https:// from the beginning and /dns-query from the end if the user entered it
+    SECURE_DNS_SERVICE=${SECURE_DNS_SERVICE#https://}
+    SECURE_DNS_SERVICE=${SECURE_DNS_SERVICE#http://}
+    SECURE_DNS_SERVICE=${SECURE_DNS_SERVICE%/dns-query}
+fi
+
+echo 'Testing secure DoH DNS server...'
+curl -s -H "accept: application/dns-json" "https://$SECURE_DNS_SERVICE"/dns-query?name=apple.com >/dev/null
+if [ $? -ne 0 ]; then
+    echo "Failed to connect to $SECURE_DNS_SERVICE"
+    exit 1
+fi
+
+echo "Using $SECURE_DNS_SERVICE as secure DoH DNS server"
+
 echo 'Running the official spoof-dpi install script, please wait...'
 curl -fsSL https://raw.githubusercontent.com/xvzc/SpoofDPI/main/install.sh | bash -s linux-amd64
 
@@ -8,7 +28,7 @@ cat >/home/$USER/.config/systemd/user/spoofdpi.service <<EOF
 Description=SpoofDPI
 
 [Service]
-ExecStart=/home/$USER/.spoof-dpi/bin/spoof-dpi -port=9696 -addr=127.0.0.1 -no-banner=true -enable-doh=true
+ExecStart=/home/$USER/.spoof-dpi/bin/spoof-dpi -port=9696 -addr=127.0.0.1 -no-banner=true -enable-doh=true -dns-addr=$SECURE_DNS_SERVICE
     
 [Install]
 WantedBy=default.target
