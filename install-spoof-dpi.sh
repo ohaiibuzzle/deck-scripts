@@ -28,7 +28,7 @@ cat >/home/$USER/.config/systemd/user/spoofdpi.service <<EOF
 Description=SpoofDPI
 
 [Service]
-ExecStart=/home/$USER/.spoof-dpi/bin/spoof-dpi -port=9696 -addr=127.0.0.1 -no-banner=true -enable-doh=true -dns-addr=$SECURE_DNS_SERVICE
+ExecStart=/home/$USER/.spoofdpi/bin/spoofdpi -port=9696 -addr=127.0.0.1 -silent -enable-doh=true -dns-addr=$SECURE_DNS_SERVICE
     
 [Install]
 WantedBy=default.target
